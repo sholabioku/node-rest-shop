@@ -4,7 +4,9 @@
   "description": "A Node.js RESTful API Tutorial Project (Build A Simple Shop API)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "babel ./src --out-dir build",
+    "start": "node ./build/server",
+    "dev": "nodemon --exec babel-node ./src/server"
   },
   "keywords": [
     "Node",
@@ -27,6 +29,7 @@
     "eslint": "^7.12.1",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.6",
     "prettier": "^2.1.2"
   }
 }
