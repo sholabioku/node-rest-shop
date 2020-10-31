@@ -4,7 +4,9 @@
   "description": "A Node.js RESTful API Tutorial Project (Build A Simple Shop API)",
   "main": "index.js",
   "scripts": {
-    "prestart": "babel ./src --out-dir build",
+    "lint": "eslint ./src",
+    "lint:fix": "prettier-eslint --write '**/*.{js,json}' '!node_modules/**'",
+    "build": "rm -rf ./build && babel ./src --out-dir build",
     "start": "node ./build/server",
     "dev": "nodemon --exec babel-node ./src/server"
   },
@@ -26,10 +28,12 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/register": "^7.12.1",
     "@babel/runtime": "^7.12.1",
-    "eslint": "^7.12.1",
+    "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.6",
-    "prettier": "^2.1.2"
+    "prettier": "^2.1.2",
+    "prettier-eslint": "^11.0.0",
+    "prettier-eslint-cli": "^5.0.0"
   }
 }
