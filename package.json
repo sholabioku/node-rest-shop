@@ -8,7 +8,7 @@
     "lint:fix": "prettier-eslint --write './src/**/*.{js,json}' '!node_modules/**'",
     "build": "rm -rf ./build && babel ./src --out-dir build",
     "start": "node ./build/server",
-    "dev": "nodemon --exec babel-node ./src/server"
+    "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server"
   },
   "keywords": [
     "Node",
@@ -18,7 +18,8 @@
   "author": "Lukman Bioku",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
