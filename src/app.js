@@ -1,11 +1,11 @@
 import express from 'express';
 
+import productRoutes from './routes/products';
+import orderRoutes from './routes/orders';
+
 const app = express();
 
-app.use((req, res, next) => {
-  res.status(200).json({
-    message: 'It works',
-  });
-});
+app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
 
 export default app;
