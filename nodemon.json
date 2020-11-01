@@ -1,4 +1,7 @@
 {
+  "env": {
+    "MONGO_ATLAS_PW": "noderestshop"
+  },
   "watch": [
     "package.json",
     "nodemon.json",
