@@ -1,4 +1,5 @@
 import express, { urlencoded, json } from 'express';
+import mongoose from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -6,6 +7,10 @@ import productRoutes from './routes/products';
 import orderRoutes from './routes/orders';
 
 const app = express();
+
+const MONGODB_URI = `mongodb+srv://bilush:${process.env.MONGO_ATLAS_PW}>@node-rest-shop.2fiwx.mongodb.net/<dbname>?retryWrites=true&w=majority`;
+
+mongoose.connect(MONGODB_URI, { useMongoClient: true });
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
