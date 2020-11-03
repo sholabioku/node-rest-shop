@@ -1,10 +1,10 @@
-const error404 = (req, res, next) => {
+const notFoundError = (req, res, next) => {
   const error = new Error('Not found');
   error.status = 404;
   next(error);
 };
 
-const error500 = (error, req, res, next) => {
+const serverError = (error, req, res, next) => {
   res.status(error.status || 500);
   res.json({
     error: {
@@ -13,4 +13,4 @@ const error500 = (error, req, res, next) => {
   });
 };
 
-export { error404, error500 };
+export { notFoundError, serverError };
