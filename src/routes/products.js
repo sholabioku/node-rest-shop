@@ -6,88 +6,57 @@ import Product from '../models/product';
 
 const router = Router();
 
-router.get('/', (req, res, next) => {
-  Product.find()
-    .exec()
-    .then((docs) => {
-      console.log(docs);
-      res.status(200).json(docs);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+router.get('/', async (req, res, next) => {
+  const docs = await Product.find();
+  res.status(200).json(docs);
 });
 
-router.post('/', (req, res, next) => {
-  const product = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: req.body.price,
+router.post('/', async (req, res, next) => {
+  const body = _.pick(req.body, ['name', 'price']);
+
+  const product = new Product(body);
+
+  const result = await product.save();
+  res.status(201).json({
+    message: 'Handling POST requets for /products',
+    createdProduct: result,
   });
-
-  product
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: 'Handling POST requets for /products',
-        createdProduct: result,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
 });
 
-router.get('/:productId', (req, res, next) => {
+router.get('/:productId', async (req, res, next) => {
   const id = req.params.productId;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: 'Invalid ID' });
+  }
 
-  Product.findById(id)
-    .then((doc) => {
-      if (doc) {
-        console.log(doc);
-        res.status(200).json(doc);
-      } else {
-        res
-          .status(404)
-          .json({ message: 'No valid enrty found for the provided ID' });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+  const doc = await Product.findById(id);
+  if (!doc) {
+    return res
+      .status(404)
+      .json({ message: 'No valid enrty found for the provided ID' });
+  }
+
+  res.status(200).json(doc);
 });
 
-router.patch('/:productId', (req, res, next) => {
+router.patch('/:productId', async (req, res, next) => {
   const id = req.params.productId;
   const body = _.pick(req.body, ['name', 'price']);
-  Product.updateOne({ _id: id }, { $set: body }, { new: true })
-    .exec()
-    .then((result) => {
-      console.log(result);
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+
+  const result = await Product.updateOne(
+    { _id: id },
+    { $set: body },
+    { new: true }
+  );
+
+  res.status(200).json(result);
 });
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', async (req, res, next) => {
   const id = req.params.productId;
-  Product.deleteMany({ _id: id })
-    .exec()
-    .then((result) => {
-      console.log(result);
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ error: err });
-    });
+  const result = await Product.deleteMany({ _id: id });
+
+  res.status(200).json(result);
 });
 
 export default router;

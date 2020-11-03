@@ -7,6 +7,8 @@ import productRoutes from './routes/products';
 import orderRoutes from './routes/orders';
 import connectDB from './config/db';
 
+require('express-async-errors');
+
 connectDB();
 
 const app = express();
