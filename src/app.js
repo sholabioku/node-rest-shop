@@ -8,9 +8,19 @@ import orderRoutes from './routes/orders';
 
 const app = express();
 
-const MONGODB_URI = `mongodb+srv://bilush:${process.env.MONGO_ATLAS_PW}>@node-rest-shop.2fiwx.mongodb.net/<dbname>?retryWrites=true&w=majority`;
+const url = 'mongodb://localhost:27017/ShopApi';
 
-mongoose.connect(MONGODB_URI, { useMongoClient: true });
+mongoose
+  .connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log(`MongoDB Connected to ${url}`.cyan.underline.bold);
+  })
+  .catch((err) => {
+    console.log('MongoDB connection failed...', err);
+  });
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
