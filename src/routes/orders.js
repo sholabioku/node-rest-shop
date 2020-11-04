@@ -9,7 +9,7 @@ const router = Router();
 router.get(
   '/',
   asyncHandler(async (req, res, next) => {
-    const docs = await Order.find();
+    const docs = await Order.find().populate('product', 'name');
     const response = {
       counts: docs.length,
       orders: docs.map((doc) => {
@@ -61,9 +61,9 @@ router.post(
 router.get(
   '/:orderId',
   asyncHandler(async (req, res, next) => {
-    const order = await Order.findById(req.params.orderId).select(
-      'quantity product _id'
-    );
+    const order = await Order.findById(req.params.orderId)
+      .select('quantity product _id')
+      .populate('product');
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
