@@ -1,11 +1,23 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import _ from 'lodash';
+import multer from 'multer';
 
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
 
 const router = Router();
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './src/uploads/');
+  },
+  filename(req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 router.get(
   '/',
@@ -31,7 +43,9 @@ router.get(
 
 router.post(
   '/',
+  upload.single('productImage'),
   asyncHandler(async (req, res, next) => {
+    console.log(req.file);
     const body = _.pick(req.body, ['name', 'price']);
 
     const product = new Product(body);
