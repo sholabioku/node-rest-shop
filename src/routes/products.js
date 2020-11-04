@@ -16,7 +16,7 @@ router.get(
       products: docs.map((doc) => {
         return {
           name: doc.name,
-          product: doc.price,
+          price: doc.price,
           _id: doc._id,
           request: {
             type: 'GET',
