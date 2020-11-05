@@ -10,7 +10,10 @@ const router = Router();
 router.post(
   '/signup',
   asyncHandler(async (req, res, next) => {
-    const user = new User({
+    let user = await User.findOne({ email: req.body.email });
+    if (user) return res.status(400).json({ message: 'User already exist' });
+
+    user = new User({
       email: req.body.email,
       password: req.body.password,
     });
