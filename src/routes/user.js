@@ -32,7 +32,9 @@ router.post(
     const isMatch = await user.matchPassword(req.body.password);
     if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
 
-    res.status(200).json({ message: 'Auth successfull' });
+    const token = await user.generateAuthToken();
+
+    res.status(200).json({ message: 'Auth successfull', token });
   })
 );
 
