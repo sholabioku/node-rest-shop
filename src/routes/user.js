@@ -23,6 +23,19 @@ router.post(
   })
 );
 
+router.post(
+  '/login',
+  asyncHandler(async (req, res, next) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(401).json({ message: 'Auth failed' });
+
+    const isMatch = await user.matchPassword(req.body.password);
+    if (!isMatch) return res.status(401).json({ message: 'Auth failed' });
+
+    res.status(200).json({ message: 'Auth successfull' });
+  })
+);
+
 router.delete(
   '/:userId',
   asyncHandler(async (req, res, next) => {
