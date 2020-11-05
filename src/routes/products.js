@@ -36,13 +36,14 @@ const upload = multer({
 router.get(
   '/',
   asyncHandler(async (req, res, next) => {
-    const docs = await Product.find().select('name price _id');
+    const docs = await Product.find().select('name price productImage _id');
     const response = {
       count: docs.length,
       products: docs.map((doc) => {
         return {
           name: doc.name,
           price: doc.price,
+          productImage: doc.productImage,
           _id: doc._id,
           request: {
             type: 'GET',
@@ -60,9 +61,13 @@ router.post(
   upload.single('productImage'),
   asyncHandler(async (req, res, next) => {
     console.log(req.file);
-    const body = _.pick(req.body, ['name', 'price']);
+    // const body = _.pick(req.body, ['name', 'price']);
 
-    const product = new Product(body);
+    const product = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      productImage: req.file.path,
+    });
 
     const result = await product.save();
     res.status(201).json({
@@ -70,6 +75,7 @@ router.post(
       createdProduct: {
         name: result.name,
         price: result.price,
+        productImage: result.productImage,
         _id: result._id,
         request: {
           type: 'GET',
@@ -88,7 +94,9 @@ router.get(
       return res.status(404).json({ message: 'Invalid ID' });
     }
 
-    const doc = await Product.findById(id).select('name price _id');
+    const doc = await Product.findById(id).select(
+      'name price productImage _id'
+    );
     if (!doc) {
       return res
         .status(404)
