@@ -5,6 +5,7 @@ import cors from 'cors';
 import { notFoundError, serverError } from './middlewares/errors';
 import productRoutes from './routes/products';
 import orderRoutes from './routes/orders';
+import userRoutes from './routes/user';
 import connectDB from './config/db';
 
 connectDB();
@@ -21,6 +22,7 @@ app.use(cors());
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 app.use(notFoundError);
 
