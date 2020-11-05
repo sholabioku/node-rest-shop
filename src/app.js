@@ -14,6 +14,7 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+app.use('/uploads', express.static('src/uploads'));
 app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());

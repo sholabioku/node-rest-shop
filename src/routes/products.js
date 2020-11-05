@@ -1,22 +1,49 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
 import _ from 'lodash';
+import multer from 'multer';
 
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
 
 const router = Router();
 
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './src/uploads/');
+  },
+  filename(req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+});
+
 router.get(
   '/',
   asyncHandler(async (req, res, next) => {
-    const docs = await Product.find().select('name price _id');
+    const docs = await Product.find().select('name price productImage _id');
     const response = {
       count: docs.length,
       products: docs.map((doc) => {
         return {
           name: doc.name,
           price: doc.price,
+          productImage: doc.productImage,
           _id: doc._id,
           request: {
             type: 'GET',
@@ -31,10 +58,16 @@ router.get(
 
 router.post(
   '/',
+  upload.single('productImage'),
   asyncHandler(async (req, res, next) => {
-    const body = _.pick(req.body, ['name', 'price']);
+    console.log(req.file);
+    // const body = _.pick(req.body, ['name', 'price']);
 
-    const product = new Product(body);
+    const product = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      productImage: req.file.path,
+    });
 
     const result = await product.save();
     res.status(201).json({
@@ -42,6 +75,7 @@ router.post(
       createdProduct: {
         name: result.name,
         price: result.price,
+        productImage: result.productImage,
         _id: result._id,
         request: {
           type: 'GET',
@@ -60,7 +94,9 @@ router.get(
       return res.status(404).json({ message: 'Invalid ID' });
     }
 
-    const doc = await Product.findById(id).select('name price _id');
+    const doc = await Product.findById(id).select(
+      'name price productImage _id'
+    );
     if (!doc) {
       return res
         .status(404)

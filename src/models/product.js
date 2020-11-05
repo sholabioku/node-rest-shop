@@ -6,6 +6,10 @@ const productSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  productImage: {
+    type: String,
+    required: true,
+  },
 });
 
 export default mongoose.model('Product', productSchema);
