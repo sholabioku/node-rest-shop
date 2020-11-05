@@ -23,4 +23,13 @@ router.post(
   })
 );
 
+router.delete(
+  '/:userId',
+  asyncHandler(async (req, res, next) => {
+    await User.deleteOne({ id: req.params.userId });
+
+    res.status(200).json({ message: 'User deleted' });
+  })
+);
+
 export default router;
