@@ -5,6 +5,7 @@ import multer from 'multer';
 
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
+import checkAuth from '../middlewares/check-auth';
 
 const router = Router();
 
@@ -58,11 +59,9 @@ router.get(
 
 router.post(
   '/',
+  checkAuth,
   upload.single('productImage'),
   asyncHandler(async (req, res, next) => {
-    console.log(req.file);
-    // const body = _.pick(req.body, ['name', 'price']);
-
     const product = new Product({
       name: req.body.name,
       price: req.body.price,
@@ -115,6 +114,7 @@ router.get(
 
 router.patch(
   '/:productId',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     const id = req.params.productId;
     const body = _.pick(req.body, ['name', 'price']);
@@ -133,6 +133,7 @@ router.patch(
 
 router.delete(
   '/:productId',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     const id = req.params.productId;
     await Product.deleteMany({ _id: id });
