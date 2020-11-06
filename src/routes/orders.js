@@ -3,11 +3,13 @@ import { Router } from 'express';
 import Order from '../models/order';
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
+import checkAuth from '../middlewares/check-auth';
 
 const router = Router();
 
 router.get(
   '/',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     const docs = await Order.find().populate('product', 'name');
     const response = {
@@ -30,6 +32,7 @@ router.get(
 
 router.post(
   '/',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     const product = await Product.findById(req.body.productId);
     if (!product) {
@@ -60,6 +63,7 @@ router.post(
 
 router.get(
   '/:orderId',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.orderId)
       .select('quantity product _id')
@@ -79,6 +83,7 @@ router.get(
 
 router.delete(
   '/:orderId',
+  checkAuth,
   asyncHandler(async (req, res, next) => {
     await Order.deleteMany({ _id: req.params.orderId });
 
