@@ -1,36 +1,101 @@
 import { Router } from 'express';
 
+import Order from '../models/order';
+import Product from '../models/product';
+import asyncHandler from '../middlewares/async';
+import checkAuth from '../middlewares/check-auth';
+
 const router = Router();
 
-router.get('/', (req, res, next) => {
-  res.status(200).json({
-    message: 'Orders were fetched',
-  });
-});
+router.get(
+  '/',
+  checkAuth,
+  asyncHandler(async (req, res, next) => {
+    const docs = await Order.find().populate('product', 'name');
+    const response = {
+      counts: docs.length,
+      orders: docs.map((doc) => {
+        return {
+          _id: doc._id,
+          product: doc.product,
+          quantity: doc.quantity,
+          request: {
+            type: 'GET',
+            url: `http://localhost:3000/orders/${doc._id}`,
+          },
+        };
+      }),
+    };
+    res.status(200).json(response);
+  })
+);
 
-router.post('/', (req, res, next) => {
-  const order = {
-    productId: req.body.productId,
-    quantity: req.body.quantity,
-  };
-  res.status(201).json({
-    message: 'Order was created',
-    order,
-  });
-});
+router.post(
+  '/',
+  checkAuth,
+  asyncHandler(async (req, res, next) => {
+    const product = await Product.findById(req.body.productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ message: 'Product with the given ID not found' });
+    }
+    const order = new Order({
+      quantity: req.body.quantity,
+      product: req.body.productId,
+    });
 
-router.get('/:orderId', (req, res, next) => {
-  res.status(200).json({
-    message: 'Order details',
-    orderId: req.params.orderId,
-  });
-});
+    const result = await order.save();
+    res.status(201).json({
+      message: 'Order was created',
+      createdOrder: {
+        _id: result._id,
+        product: result.product,
+        quantity: result.quantity,
+      },
+      request: {
+        type: 'GET',
+        url: `http://localhost:3000/orders/${result._id}`,
+      },
+    });
+  })
+);
 
-router.delete('/:orderId', (req, res, next) => {
-  res.status(200).json({
-    message: 'Order deleted',
-    orderId: req.params.orderId,
-  });
-});
+router.get(
+  '/:orderId',
+  checkAuth,
+  asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.orderId)
+      .select('quantity product _id')
+      .populate('product');
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.status(200).json({
+      order,
+      request: {
+        type: 'GET',
+        url: 'http://localhost:3000/orders',
+      },
+    });
+  })
+);
+
+router.delete(
+  '/:orderId',
+  checkAuth,
+  asyncHandler(async (req, res, next) => {
+    await Order.deleteMany({ _id: req.params.orderId });
+
+    res.status(200).json({
+      message: 'Order deleted',
+      request: {
+        type: 'POST',
+        url: 'http://localhost:3000/orders',
+        body: { productId: 'ID', quantity: 'Number' },
+      },
+    });
+  })
+);
 
 export default router;

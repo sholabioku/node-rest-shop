@@ -28,8 +28,8 @@
     "arrow-parens": [0],
     "no-unused-vars": 1,
     "object-curly-spacing": ["warn", "always"],
-    "array-bracket-spacing": ["warn", "always"],
     "import/prefer-default-export": [0],
-    "object-shorthand": 1
+    "object-shorthand": 1,
+    "no-underscore-dangle": 1
   }
 }

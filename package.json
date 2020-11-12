@@ -18,10 +18,16 @@
   "author": "Lukman Bioku",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "mongoose": "^5.10.11",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
