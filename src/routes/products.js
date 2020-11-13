@@ -1,11 +1,14 @@
 import { Router } from 'express';
-import mongoose from 'mongoose';
-import _ from 'lodash';
 import multer from 'multer';
 
-import Product from '../models/product';
-import asyncHandler from '../middlewares/async';
 import checkAuth from '../middlewares/check-auth';
+import {
+  getProducts,
+  getProduct,
+  addProduct,
+  editProduct,
+  deleteProduct,
+} from '../controllers/products';
 
 const router = Router();
 
@@ -34,119 +37,14 @@ const upload = multer({
   },
 });
 
-router.get(
-  '/',
-  asyncHandler(async (req, res, next) => {
-    const docs = await Product.find().select('name price productImage _id');
-    const response = {
-      count: docs.length,
-      products: docs.map((doc) => {
-        return {
-          name: doc.name,
-          price: doc.price,
-          productImage: doc.productImage,
-          _id: doc._id,
-          request: {
-            type: 'GET',
-            url: `http://localhost:3000/products/${doc._id}`,
-          },
-        };
-      }),
-    };
-    res.status(200).json(response);
-  })
-);
+router.get('/', getProducts);
 
-router.post(
-  '/',
-  checkAuth,
-  upload.single('productImage'),
-  asyncHandler(async (req, res, next) => {
-    const product = new Product({
-      name: req.body.name,
-      price: req.body.price,
-      productImage: req.file.path,
-    });
+router.post('/', checkAuth, upload.single('productImage'), addProduct);
 
-    const result = await product.save();
-    res.status(201).json({
-      message: 'Product created successfully',
-      createdProduct: {
-        name: result.name,
-        price: result.price,
-        productImage: result.productImage,
-        _id: result._id,
-        request: {
-          type: 'GET',
-          url: `http://localhost:3000/products/${result._id}`,
-        },
-      },
-    });
-  })
-);
+router.get('/:productId', getProduct);
 
-router.get(
-  '/:productId',
-  asyncHandler(async (req, res, next) => {
-    const id = req.params.productId;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ message: 'Invalid ID' });
-    }
+router.patch('/:productId', checkAuth, editProduct);
 
-    const doc = await Product.findById(id).select(
-      'name price productImage _id'
-    );
-    if (!doc) {
-      return res
-        .status(404)
-        .json({ message: 'No valid enrty found for the provided ID' });
-    }
-
-    res.status(200).json({
-      product: doc,
-      request: {
-        type: 'GET',
-        url: 'http://localhost:3000/products',
-      },
-    });
-  })
-);
-
-router.patch(
-  '/:productId',
-  checkAuth,
-  asyncHandler(async (req, res, next) => {
-    const id = req.params.productId;
-    const body = _.pick(req.body, ['name', 'price']);
-
-    await Product.updateOne({ _id: id }, { $set: body }, { new: true });
-
-    res.status(200).json({
-      message: 'Product updated successfully',
-      request: {
-        type: 'GET',
-        url: `http://localhost:3000/products/${id}`,
-      },
-    });
-  })
-);
-
-router.delete(
-  '/:productId',
-  checkAuth,
-  asyncHandler(async (req, res, next) => {
-    const id = req.params.productId;
-    await Product.deleteMany({ _id: id });
-
-    res.status(200).json({
-      message: 'Product deleted',
-      request: {
-        type: 'POST',
-        url: 'http://localhost:3000/products',
-        body: { name: 'String', price: 'Number' },
-      },
-    });
-  })
-);
+router.delete('/:productId', checkAuth, deleteProduct);
 
 export default router;
