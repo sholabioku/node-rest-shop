@@ -15,3 +15,11 @@ export const validateProductId = (req, res, next) => {
   }
   next();
 };
+
+export const validateUserId = (req, res, next) => {
+  const id = req.params.userId;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ message: 'Invalid ID' });
+  }
+  next();
+};
