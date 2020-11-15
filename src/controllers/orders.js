@@ -1,19 +1,20 @@
+import mongoose from 'mongoose';
 import Order from '../models/order';
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
 
 export const getOrders = asyncHandler(async (req, res, next) => {
-  const docs = await Order.find().populate('product', 'name');
+  const products = await Order.find().populate('product', 'name');
   const response = {
-    counts: docs.length,
-    orders: docs.map((doc) => {
+    counts: products.length,
+    orders: products.map((product) => {
       return {
-        _id: doc._id,
-        product: doc.product,
-        quantity: doc.quantity,
+        _id: product._id,
+        product: product.product,
+        quantity: product.quantity,
         request: {
           type: 'GET',
-          url: `http://localhost:3000/orders/${doc._id}`,
+          url: `http://localhost:3000/orders/${product._id}`,
         },
       };
     }),
@@ -22,28 +23,31 @@ export const getOrders = asyncHandler(async (req, res, next) => {
 });
 
 export const addOrder = asyncHandler(async (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.body.productId))
+    return res.status(404).json({ message: 'Invalid ID' });
+
   const product = await Product.findById(req.body.productId);
   if (!product) {
     return res
       .status(404)
-      .json({ message: 'Product with the given ID not found' });
+      .json({ message: `Product with id of ${req.body.productId} not found` });
   }
   const order = new Order({
     quantity: req.body.quantity,
     product: req.body.productId,
   });
 
-  const result = await order.save();
+  const createdOrder = await order.save();
   res.status(201).json({
     message: 'Order was created',
     createdOrder: {
-      _id: result._id,
-      product: result.product,
-      quantity: result.quantity,
+      _id: createdOrder._id,
+      product: createdOrder.product,
+      quantity: createdOrder.quantity,
     },
     request: {
       type: 'GET',
-      url: `http://localhost:3000/orders/${result._id}`,
+      url: `http://localhost:3000/orders/${createdOrder._id}`,
     },
   });
 });
@@ -65,7 +69,8 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteOrder = asyncHandler(async (req, res, next) => {
-  await Order.deleteMany({ _id: req.params.orderId });
+  const order = await Order.findByIdAndDelete({ _id: req.params.orderId });
+  if (!order) return res.status(404).json({ message: 'Order not found' });
 
   res.status(200).json({
     message: 'Order deleted',

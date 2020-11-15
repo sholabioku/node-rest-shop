@@ -10,6 +10,8 @@ import {
   deleteProduct,
 } from '../controllers/products';
 
+import { validateProductId } from '../middlewares/validateObjectId';
+
 const router = Router();
 
 const storage = multer.diskStorage({
@@ -41,10 +43,10 @@ router.get('/', getProducts);
 
 router.post('/', checkAuth, upload.single('productImage'), addProduct);
 
-router.get('/:productId', getProduct);
+router.get('/:productId', validateProductId, getProduct);
 
-router.patch('/:productId', checkAuth, editProduct);
+router.patch('/:productId', [checkAuth, validateProductId], editProduct);
 
-router.delete('/:productId', checkAuth, deleteProduct);
+router.delete('/:productId', [checkAuth, validateProductId], deleteProduct);
 
 export default router;

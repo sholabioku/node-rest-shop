@@ -30,6 +30,7 @@
     "object-curly-spacing": ["warn", "always"],
     "import/prefer-default-export": [0],
     "object-shorthand": 1,
-    "no-underscore-dangle": 1
+    "no-underscore-dangle": 1,
+    "consistent-return": 1
   }
 }
