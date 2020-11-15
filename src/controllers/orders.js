@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Order from '../models/order';
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
@@ -22,11 +23,14 @@ export const getOrders = asyncHandler(async (req, res, next) => {
 });
 
 export const addOrder = asyncHandler(async (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.body.productId))
+    return res.status(404).json({ message: 'Invalid ID' });
+
   const product = await Product.findById(req.body.productId);
   if (!product) {
     return res
       .status(404)
-      .json({ message: 'Product with the given ID not found' });
+      .json({ message: `Product with id of ${req.body.productId} not found` });
   }
   const order = new Order({
     quantity: req.body.quantity,
@@ -65,7 +69,8 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteOrder = asyncHandler(async (req, res, next) => {
-  await Order.findByIdAndDelete({ _id: req.params.orderId });
+  const order = await Order.findByIdAndDelete({ _id: req.params.orderId });
+  if (!order) return res.status(404).json({ message: 'Order not found' });
 
   res.status(200).json({
     message: 'Order deleted',
