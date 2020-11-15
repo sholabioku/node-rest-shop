@@ -6,6 +6,7 @@ import {
   deleteUser,
 } from '../controllers/user';
 
+import checkAuth from '../middlewares/check-auth';
 import { validateUserId } from '../middlewares/validateObjectId';
 
 const router = Router();
@@ -14,6 +15,6 @@ router.post('/signup', registerUser);
 
 router.post('/login', authenticateUser);
 
-router.delete('/:userId', validateUserId, deleteUser);
+router.delete('/:userId', [checkAuth, validateUserId], deleteUser);
 
 export default router;
