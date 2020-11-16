@@ -3,8 +3,6 @@ import mongoose from 'mongoose';
 const productSchema = mongoose.Schema({
   name: {
     type: String,
-    minLength: 5,
-    maxLength: 255,
     required: true,
   },
   price: {
