@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   registerUser,
   authenticateUser,
+  getCurrentUser,
   deleteUser,
 } from '../controllers/user';
 
@@ -14,6 +15,8 @@ const router = Router();
 router.post('/signup', registerUser);
 
 router.post('/login', authenticateUser);
+
+router.get('/', checkAuth, getCurrentUser);
 
 router.delete('/:userId', [checkAuth, validateUserId], deleteUser);
 
