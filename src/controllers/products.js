@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import _ from 'lodash';
 import Product from '../models/product';
 import asyncHandler from '../middlewares/async';

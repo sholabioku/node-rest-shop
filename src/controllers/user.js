@@ -25,6 +25,11 @@ export const authenticateUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: 'Auth successfull', token });
 });
 
+export const getCurrentUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.userId).select('-password');
+  res.status(200).json(user);
+});
+
 export const deleteUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.userId);
   if (!user) return res.status(404).json({ message: 'User not found' });

@@ -6,13 +6,15 @@ const userSchema = mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    match: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+    match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/,
     required: true,
   },
   password: {
     type: String,
+    minlength: 5,
     required: true,
   },
+  isAdmin: Boolean,
 });
 
 userSchema.pre('save', async function hashPassword(next) {
@@ -29,7 +31,7 @@ userSchema.methods.matchPassword = function matchPassword(enteredPassword) {
 
 userSchema.methods.generateAuthToken = function generateAuthToken() {
   return jwt.sign(
-    { email: this.email, userId: this._id },
+    { userId: this._id, isAdmin: this.isAdmin },
     process.env.JWT_KEY,
     {
       expiresIn: process.env.JWT_EXPIRE,
