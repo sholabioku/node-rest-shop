@@ -14,10 +14,7 @@ const userSchema = mongoose.Schema({
     minlength: 5,
     required: true,
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
+  isAdmin: Boolean,
 });
 
 userSchema.pre('save', async function hashPassword(next) {

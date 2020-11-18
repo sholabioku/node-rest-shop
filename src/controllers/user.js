@@ -8,7 +8,6 @@ export const registerUser = asyncHandler(async (req, res, next) => {
   user = new User({
     email: req.body.email,
     password: req.body.password,
-    isAdmin: req.body.isAdmin,
   });
   await user.save();
   res.status(201).json({ message: 'User created successfully' });
