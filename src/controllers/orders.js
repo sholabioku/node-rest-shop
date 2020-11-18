@@ -4,17 +4,21 @@ import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
 
 export const getOrders = asyncHandler(async (req, res, next) => {
-  const products = await Order.find().populate('product', 'name');
+  const orders = await Order.find({ customer: req.user.userId }).populate(
+    'product',
+    'name'
+  );
+
   const response = {
-    counts: products.length,
-    orders: products.map((product) => {
+    counts: orders.length,
+    orders: orders.map((order) => {
       return {
-        _id: product._id,
-        product: product.product,
-        quantity: product.quantity,
+        _id: order._id,
+        product: order.product,
+        quantity: order.quantity,
         request: {
           type: 'GET',
-          url: `http://localhost:3000/orders/${product._id}`,
+          url: `http://localhost:3000/orders/${order._id}`,
         },
       };
     }),
@@ -35,6 +39,7 @@ export const addOrder = asyncHandler(async (req, res, next) => {
   const order = new Order({
     quantity: req.body.quantity,
     product: req.body.productId,
+    customer: req.user.userId,
   });
 
   const createdOrder = await order.save();
@@ -69,7 +74,7 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteOrder = asyncHandler(async (req, res, next) => {
-  const order = await Order.findByIdAndDelete({ _id: req.params.orderId });
+  const order = await Order.findByIdAndUpdate(req.params.orderId);
   if (!order) return res.status(404).json({ message: 'Order not found' });
 
   res.status(200).json({
