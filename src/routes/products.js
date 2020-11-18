@@ -10,6 +10,7 @@ import {
   deleteProduct,
 } from '../controllers/products';
 
+import admin from '../middlewares/admin';
 import { validateProductId } from '../middlewares/validateObjectId';
 
 const router = Router();
@@ -41,12 +42,16 @@ const upload = multer({
 
 router.get('/', getProducts);
 
-router.post('/', checkAuth, upload.single('productImage'), addProduct);
+router.post('/', [checkAuth, admin], upload.single('productImage'), addProduct);
 
 router.get('/:productId', validateProductId, getProduct);
 
-router.patch('/:productId', [checkAuth, validateProductId], editProduct);
+router.patch('/:productId', [checkAuth, admin, validateProductId], editProduct);
 
-router.delete('/:productId', [checkAuth, validateProductId], deleteProduct);
+router.delete(
+  '/:productId',
+  [checkAuth, admin, validateProductId],
+  deleteProduct
+);
 
 export default router;
