@@ -1,16 +1,18 @@
 import mongoose from 'mongoose';
 
 const connectDB = async () => {
-  const url = 'mongodb://localhost:27017/ShopApi';
+  // const url = 'mongodb://localhost:27017/ShopApi';
 
   await mongoose
-    .connect(url, {
+    .connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     })
     .then(() => {
-      console.log(`MongoDB Connected to ${url}`.cyan.underline.bold);
+      console.log(
+        `MongoDB Connected to ${process.env.MONGO_URI}`.cyan.underline.bold
+      );
     })
     .catch((err) => {
       console.log('MongoDB connection failed...', err);
