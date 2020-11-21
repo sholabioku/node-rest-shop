@@ -2,6 +2,7 @@ import express, { urlencoded, json } from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import xss from 'xss-clean';
 
@@ -18,6 +19,12 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1,
+});
+
 app.use('/uploads', express.static('src/uploads'));
 app.use(urlencoded({ extended: false }));
 app.use(json());
@@ -25,6 +32,7 @@ app.use(cors());
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
+app.use(limiter);
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
