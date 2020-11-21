@@ -3,6 +3,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
+import xss from 'xss-clean';
 
 import { notFoundError, serverError } from './middlewares/errors';
 import productRoutes from './routes/products';
@@ -23,6 +24,7 @@ app.use(json());
 app.use(cors());
 app.use(helmet());
 app.use(mongoSanitize());
+app.use(xss());
 
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
