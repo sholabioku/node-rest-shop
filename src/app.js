@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
+import hpp from 'hpp';
 import xss from 'xss-clean';
 
 import { notFoundError, serverError } from './middlewares/errors';
@@ -32,6 +33,7 @@ app.use(cors());
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
+app.use(hpp());
 app.use(limiter);
 
 app.use('/products', productRoutes);
