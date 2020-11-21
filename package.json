@@ -8,7 +8,9 @@
     "lint:fix": "prettier-eslint --write './src/**/*.{js,json}' '!node_modules/**'",
     "build": "rm -rf ./build && babel ./src --out-dir build",
     "start": "node ./build/server",
-    "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server"
+    "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server",
+    "test": "NODE_ENV=test nyc --reporter=html --reporter=text --reporter=lcov mocha --timeout 20s -r @babel/register",
+    "test-watch": "nodemon --exec \"npm test\""
   },
   "keywords": [
     "Node",
@@ -42,6 +44,7 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/register": "^7.12.1",
     "@babel/runtime": "^7.12.1",
+    "babel-watch": "^7.0.0",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.15.0",
