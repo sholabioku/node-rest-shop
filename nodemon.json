@@ -1,8 +1,15 @@
 {
-  "env": {
-    "MONGO_URI": "mongodb+srv://bilush:noderestshop@node-rest-shop.2fiwx.mongodb.net/ShopApi?retryWrites=true&w=majority",
+  "test": {
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost:27017/ShopApiTest",
     "JWT_KEY": "secret",
-    "JWT_EXPIRE": "1h"
+    "JWT_EXPIRE": "24h"
+  },
+  "development": {
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost:27017/ShopApi",
+    "JWT_KEY": "secret",
+    "JWT_EXPIRE": "24h"
   },
   "watch": [
     "package.json",
