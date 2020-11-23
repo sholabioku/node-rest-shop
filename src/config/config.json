@@ -1,0 +1,14 @@
+{
+  "test": {
+    "PORT": 3000,
+    "MONGO_URI": "mongodb://localhost:27017/ShopApiTest",
+    "JWT_KEY": "secret",
+    "JWT_EXPIRE": "24h"
+  },
+  "development": {
+    "PORT": 3000,
+    "MONGO_URI": "mongodb://localhost:27017/ShopApi",
+    "JWT_KEY": "secret",
+    "JWT_EXPIRE": "24h"
+  }
+}
