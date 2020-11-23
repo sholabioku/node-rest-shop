@@ -4,7 +4,7 @@ import Product from '../models/product';
 import asyncHandler from '../middlewares/async';
 
 export const getOrders = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find({ customer: req.user.userId }).populate(
+  const orders = await Order.find({ customer: req.user._id }).populate(
     'product',
     'name'
   );
@@ -39,7 +39,7 @@ export const addOrder = asyncHandler(async (req, res, next) => {
   const order = new Order({
     quantity: req.body.quantity,
     product: req.body.productId,
-    customer: req.user.userId,
+    customer: req.user._id,
   });
 
   const createdOrder = await order.save();
