@@ -1,24 +1,13 @@
 {
-  "test": {
-    "PORT": 3000,
-    "MONGO_URI": "mongodb://localhost:27017/ShopApiTest",
-    "JWT_KEY": "secret",
-    "JWT_EXPIRE": "24h"
-  },
-  "development": {
-    "PORT": 3000,
-    "MONGO_URI": "mongodb://localhost:27017/ShopApi",
-    "JWT_KEY": "secret",
-    "JWT_EXPIRE": "24h"
-  },
   "watch": [
     "package.json",
     "nodemon.json",
     ".eslintrc.json",
     ".babelrc",
     ".prettierrc",
+    "*.test.js",
     "src/"
   ],
   "verbose": true,
-  "ignore": ["*.test.js", "*.spec.js"]
+  "ignore": ["*.spec.js"]
 }
