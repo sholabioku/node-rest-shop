@@ -13,6 +13,8 @@ import orderRoutes from './routes/orders';
 import userRoutes from './routes/user';
 import connectDB from './config/db';
 
+require('./config/config');
+
 connectDB();
 
 const app = express();
