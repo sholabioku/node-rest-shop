@@ -3,3 +3,4 @@ build
 src/uploads
 .nyc_output
 coverage
+lcov.info
