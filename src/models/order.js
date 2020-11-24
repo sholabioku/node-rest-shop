@@ -10,6 +10,10 @@ const orderSchema = mongoose.Schema({
     type: Number,
     default: 1,
   },
+  customer: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 });
 
 export default mongoose.model('Order', orderSchema);

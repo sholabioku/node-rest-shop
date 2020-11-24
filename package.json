@@ -8,7 +8,13 @@
     "lint:fix": "prettier-eslint --write './src/**/*.{js,json}' '!node_modules/**'",
     "build": "rm -rf ./build && babel ./src --out-dir build",
     "start": "node ./build/server",
-    "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server"
+    "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && nyc --reporter=html --reporter=text --reporter=lcov mocha tests/**/*.test.js --timeout 20s -r @babel/register  --exit",
+    "test-watch": "nodemon --exec \"npm test\"",
+    "generate-lcov": "nyc report --reporter=text-lcov > lcov.info",
+    "coveralls-coverage": "coveralls < lcov.info",
+    "codeclimate-coverage": "codeclimate-test-reporter < lcov.info",
+    "coverage": "nyc npm test && npm run generate-lcov && npm run coveralls-coverage && npm run codeclimate-coverage"
   },
   "keywords": [
     "Node",
@@ -23,11 +29,16 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.0.0",
+    "express-rate-limit": "^5.2.3",
+    "helmet": "^4.2.0",
+    "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "mongoose": "^5.10.11",
     "morgan": "^1.10.0",
-    "multer": "^1.4.2"
+    "multer": "^1.4.2",
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
@@ -37,17 +48,22 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/register": "^7.12.1",
     "@babel/runtime": "^7.12.1",
+    "babel-watch": "^7.0.0",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
+    "expect": "^26.6.2",
     "husky": "^4.3.0",
     "lint-staged": "^10.5.0",
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "prettier": "^2.1.2",
     "prettier-eslint": "^11.0.0",
-    "prettier-eslint-cli": "^5.0.0"
+    "prettier-eslint-cli": "^5.0.0",
+    "supertest": "^6.0.1"
   },
   "husky": {
     "hooks": {
