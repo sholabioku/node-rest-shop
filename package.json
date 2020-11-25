@@ -9,7 +9,7 @@
     "build": "rm -rf ./build && babel ./src --out-dir build",
     "start": "node ./build/server",
     "dev": " NODE_ENV=development nodemon --exec babel-node ./src/server",
-    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && nyc --reporter=html --reporter=text --reporter=lcov mocha tests/**/*.test.js --timeout 20s -r @babel/register  --exit",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && nyc --reporter=html --reporter=text --reporter=lcov mocha src/**/*.test.js --timeout 20s -r @babel/register  --exit",
     "test-watch": "nodemon --exec \"npm test\""
   },
   "keywords": [
