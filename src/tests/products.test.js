@@ -4,6 +4,7 @@ import request from 'supertest';
 
 import server from '../server';
 import Product from '../models/product';
+import User from '../models/user';
 import { products, populateProducts } from './seed/seed';
 
 describe('Integration Test for Product', () => {
@@ -39,6 +40,15 @@ describe('Integration Test for Product', () => {
     it('should return 401 if client is not logged in', async () => {
       const res = await request(server).post('/products').send(products[0]);
       expect(res.status).toBe(401);
+    });
+
+    it('should return 403 if client is not admin', async () => {
+      const token = new User().generateAuthToken({ isAdmin: false });
+      const res = await request(server)
+        .post('/products')
+        .set('auth', token)
+        .send(products[0]);
+      expect(res.status).toBe(403);
     });
   });
 });
