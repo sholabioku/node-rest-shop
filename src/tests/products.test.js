@@ -34,4 +34,11 @@ describe('Integration Test for Product', () => {
       expect(res.status).toBe(404);
     });
   });
+
+  describe('POST /products', () => {
+    it('should return 401 if client is not logged in', async () => {
+      const res = await request(server).post('/products').send(products[0]);
+      expect(res.status).toBe(401);
+    });
+  });
 });
