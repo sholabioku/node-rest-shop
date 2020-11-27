@@ -20,7 +20,11 @@ describe('Integration Test for Product', () => {
       const res = await request(server).get(`/products/${products[0]._id}`);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('product.name', products[0].name);
-      console.log(res.body);
+    });
+
+    it('should return 404 if invalid id is passed', async () => {
+      const res = await request(server).get('/products/123');
+      expect(res.status).toBe(404);
     });
   });
 });
