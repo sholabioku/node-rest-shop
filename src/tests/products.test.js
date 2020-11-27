@@ -50,5 +50,17 @@ describe('Integration Test for Product', () => {
         .send(products[0]);
       expect(res.status).toBe(403);
     });
+
+    it('should save the product if it is valid', async () => {
+      const token = new User().generateAuthToken({ isAdmin: true });
+      await request(server)
+        .post('/products')
+        .set('auth', token)
+        .send(products[0]);
+
+      const product = await Product.find(products[0]);
+
+      expect(product).not.toBeNull();
+    });
   });
 });
