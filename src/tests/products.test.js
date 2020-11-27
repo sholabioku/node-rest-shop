@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import expect from 'expect';
 import request from 'supertest';
 
@@ -24,6 +25,12 @@ describe('Integration Test for Product', () => {
 
     it('should return 404 if invalid id is passed', async () => {
       const res = await request(server).get('/products/123');
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if product with the given productId not found', async () => {
+      const id = mongoose.Types.ObjectId();
+      const res = await request(server).get(`/products/${id}`);
       expect(res.status).toBe(404);
     });
   });
