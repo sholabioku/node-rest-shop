@@ -30,9 +30,13 @@ userSchema.methods.matchPassword = function matchPassword(enteredPassword) {
 };
 
 userSchema.methods.generateAuthToken = function generateAuthToken() {
-  return jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, 'secret', {
-    expiresIn: '7h',
-  });
+  return jwt.sign(
+    { _id: this._id, isAdmin: this.isAdmin },
+    process.env.JWT_KEY,
+    {
+      expiresIn: process.env.JWT_EXPIRE,
+    }
+  );
 };
 
 export default mongoose.model('User', userSchema);
