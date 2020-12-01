@@ -43,7 +43,7 @@ describe('Integration Test for Product', () => {
     });
 
     it('should return 403 if client is not admin', async () => {
-      const token = new User().generateAuthToken({ isAdmin: false });
+      const token = new User({ isAdmin: false }).generateAuthToken();
       const res = await request(server)
         .post('/products')
         .set('auth', token)
@@ -52,7 +52,7 @@ describe('Integration Test for Product', () => {
     });
 
     it('should save the product if it is valid', async () => {
-      const token = new User().generateAuthToken({ isAdmin: true });
+      const token = new User({ isAdmin: true }).generateAuthToken();
       await request(server)
         .post('/products')
         .set('auth', token)
