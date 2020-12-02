@@ -13,6 +13,7 @@ describe('check-auth middlewrae', () => {
     const res = await request(server).post('/products').send(products[0]);
     expect(res.status).toBe(401);
   });
+
   it('should return 400 if invalid token is provided', async () => {
     // const token = new User().generateAuthToken();
     const res = await request(server)
