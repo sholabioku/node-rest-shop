@@ -5,12 +5,12 @@ import request from 'supertest';
 import server from '../server';
 import Product from '../models/product';
 import User from '../models/user';
-// import { products, populateProducts } from './seed/seed';
 
 describe('Integration Test for Product', () => {
   afterEach(async () => {
     await Product.deleteMany({});
   });
+
   describe('GET /products', () => {
     it('should return all products', async () => {
       const products = [
