@@ -94,5 +94,15 @@ describe('Integration Test for Product', () => {
         .send(updatedProduct);
       expect(res.status).toBe(404);
     });
+
+    it('should return 404 if product with the given productId not found', async () => {
+      const id = new mongoose.Types.ObjectId();
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .patch(`/products/${id}`)
+        .set('auth', token)
+        .send(updatedProduct);
+      expect(res.status).toBe(404);
+    });
   });
 });
