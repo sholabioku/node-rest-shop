@@ -72,7 +72,7 @@ describe('Integration Test for Product', () => {
     };
     it('should return 401 if client is not logged in', async () => {
       const res = await request(server)
-        .patch('/products/productId')
+        .patch(`/products/${products[0]._id}`)
         .send(updatedProduct);
       expect(res.status).toBe(401);
     });
@@ -80,10 +80,19 @@ describe('Integration Test for Product', () => {
     it('should return 403 if client is not admin', async () => {
       const token = new User({ isAdmin: false }).generateAuthToken();
       const res = await request(server)
-        .patch('/products/productId')
+        .patch(`/products/${products[0]._id}`)
         .set('auth', token)
         .send(updatedProduct);
       expect(res.status).toBe(403);
+    });
+
+    it('should return 404 if invalid id is passed', async () => {
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .patch('/products/123abc')
+        .set('auth', token)
+        .send(updatedProduct);
+      expect(res.status).toBe(404);
     });
   });
 });
