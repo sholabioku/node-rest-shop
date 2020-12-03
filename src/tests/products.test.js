@@ -105,53 +105,69 @@ describe('Integration Test for Product', () => {
     });
   });
 
-  describe.skip('PATCH /productId', () => {
-    const updatedProduct = {
-      name: 'Range Rover',
-      price: 2500,
-      productImage: 'rangerover.jpg',
-    };
-    it('should return 401 if client is not logged in', async () => {
+  describe('PATCH /productId', () => {
+    let token;
+    let product;
+    let newName;
+    let newPrice;
+    let newProductImage;
+    let id;
+
+    const exec = async () => {
       const res = await request(server)
-        .patch(`/products/${products[0]._id}`)
-        .send(updatedProduct);
+        .patch(`/products/${id}`)
+        .set('auth', token)
+        .send({
+          name: newName,
+          price: newPrice,
+          productImage: newProductImage,
+        });
+
+      return res;
+    };
+
+    beforeEach(async () => {
+      product = new Product({
+        name: 'Benz',
+        price: 2000,
+        productImage: 'benz.jpg',
+      });
+      await product.save();
+
+      id = product._id;
+      token = new User({ isAdmin: true }).generateAuthToken();
+      newName = 'Laptop';
+      newPrice = 2500;
+      newProductImage = 'laptop.jpg';
+    });
+
+    it('should return 401 if client is not logged in', async () => {
+      token = '';
+      const res = await exec();
       expect(res.status).toBe(401);
     });
 
     it('should return 403 if client is not admin', async () => {
-      const token = new User({ isAdmin: false }).generateAuthToken();
-      const res = await request(server)
-        .patch(`/products/${products[0]._id}`)
-        .set('auth', token)
-        .send(updatedProduct);
+      token = new User({ isAdmin: false }).generateAuthToken();
+      const res = await exec();
       expect(res.status).toBe(403);
     });
 
     it('should return 404 if invalid id is passed', async () => {
-      const token = new User({ isAdmin: true }).generateAuthToken();
-      const res = await request(server)
-        .patch('/products/123abc')
-        .set('auth', token)
-        .send(updatedProduct);
+      id = '123abc';
+      const res = await exec();
       expect(res.status).toBe(404);
     });
 
     it('should return 404 if product with the given productId not found', async () => {
-      const id = new mongoose.Types.ObjectId();
-      const token = new User({ isAdmin: true }).generateAuthToken();
-      const res = await request(server)
-        .patch(`/products/${id}`)
-        .set('auth', token)
-        .send(updatedProduct);
+      id = new mongoose.Types.ObjectId();
+
+      const res = await exec();
       expect(res.status).toBe(404);
     });
 
     it('should update the product', async () => {
-      const token = new User({ isAdmin: true }).generateAuthToken();
-      const res = await request(server)
-        .patch(`/products/${products[0]._id}`)
-        .set('auth', token)
-        .send(updatedProduct);
+      const res = await exec();
       expect(res.status).toBe(200);
     });
   });
