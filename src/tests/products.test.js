@@ -63,4 +63,18 @@ describe('Integration Test for Product', () => {
       expect(product).not.toBeNull();
     });
   });
+
+  describe('PATCH /productId', () => {
+    const updatedProduct = {
+      name: 'Range Rover',
+      price: 2500,
+      productImage: 'rangerover.jpg',
+    };
+    it('should return 401 if client is not logged in', async () => {
+      const res = await request(server)
+        .patch('/products/productId')
+        .send(updatedProduct);
+      expect(res.status).toBe(401);
+    });
+  });
 });
