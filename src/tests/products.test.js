@@ -76,5 +76,14 @@ describe('Integration Test for Product', () => {
         .send(updatedProduct);
       expect(res.status).toBe(401);
     });
+
+    it('should return 403 if client is not admin', async () => {
+      const token = new User({ isAdmin: false }).generateAuthToken();
+      const res = await request(server)
+        .patch('/products/productId')
+        .set('auth', token)
+        .send(updatedProduct);
+      expect(res.status).toBe(403);
+    });
   });
 });
