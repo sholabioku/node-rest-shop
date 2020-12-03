@@ -104,5 +104,14 @@ describe('Integration Test for Product', () => {
         .send(updatedProduct);
       expect(res.status).toBe(404);
     });
+
+    it('should update the product', async () => {
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .patch(`/products/${products[0]._id}`)
+        .set('auth', token)
+        .send(updatedProduct);
+      expect(res.status).toBe(200);
+    });
   });
 });
