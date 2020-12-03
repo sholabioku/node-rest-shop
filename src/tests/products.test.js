@@ -62,45 +62,44 @@ describe('Integration Test for Product', () => {
   });
 
   describe('POST /products', () => {
+    let token;
+    let name;
+    let price;
+    let productImage;
+
+    const exec = async () => {
+      const res = await request(server)
+        .post('/products')
+        .set('auth', token)
+        .send({ name, price, productImage });
+
+      return res;
+    };
+
+    beforeEach(() => {
+      token = new User({ isAdmin: true }).generateAuthToken();
+      name = 'Benz';
+      price = 2000;
+      productImage = 'benz.png';
+    });
+
     it('should return 401 if client is not logged in', async () => {
-      const res = await request(server).post('/products').send({
-        _id: new mongoose.Types.ObjectId(),
-        name: 'productOne',
-        price: 2000,
-        productImage: 'benz.png',
-      });
+      token = '';
+
+      const res = await exec();
       expect(res.status).toBe(401);
     });
 
     it('should return 403 if client is not admin', async () => {
-      const token = new User({ isAdmin: false }).generateAuthToken();
-      const res = await request(server)
-        .post('/products')
-        .set('auth', token)
-        .send({
-          _id: new mongoose.Types.ObjectId(),
-          name: 'productOne',
-          price: 2000,
-          productImage: 'benz.png',
-        });
+      token = new User({ isAdmin: false }).generateAuthToken();
+      const res = await exec();
       expect(res.status).toBe(403);
     });
 
     it('should save the product if it is valid', async () => {
-      const token = new User({ isAdmin: true }).generateAuthToken();
-      await request(server).post('/products').set('auth', token).send({
-        _id: new mongoose.Types.ObjectId(),
-        name: 'productOne',
-        price: 2000,
-        productImage: 'benz.png',
-      });
+      await exec();
 
-      const product = await Product.find({
-        _id: new mongoose.Types.ObjectId(),
-        name: 'productOne',
-        price: 2000,
-        productImage: 'benz.png',
-      });
+      const product = await Product.find({ name, price, productImage });
 
       expect(product).not.toBeNull();
     });
