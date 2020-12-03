@@ -105,7 +105,7 @@ describe('Integration Test for Product', () => {
     });
   });
 
-  describe('PATCH /productId', () => {
+  describe('PATCH /products/productId', () => {
     let token;
     let product;
     let newName;
@@ -169,6 +169,73 @@ describe('Integration Test for Product', () => {
     it('should update the product', async () => {
       const res = await exec();
       expect(res.status).toBe(200);
+    });
+  });
+
+  describe('DELETE /products/:productId', () => {
+    let token;
+    let product;
+    let id;
+    const exec = async () => {
+      const res = await request(server)
+        .delete(`/products/${id}`)
+        .set('auth', token)
+        .send();
+
+      return res;
+    };
+
+    beforeEach(async () => {
+      product = new Product({
+        _id: new mongoose.Types.ObjectId(),
+        name: 'productOne',
+        price: 2000,
+        productImage: 'benz.png',
+      });
+
+      await product.save();
+
+      id = product._id;
+      token = new User({ isAdmin: true }).generateAuthToken();
+    });
+
+    it('should return 401 if client is not logged in', async () => {
+      token = '';
+      const res = await exec();
+
+      expect(res.status).toBe(401);
+    });
+
+    it('should return 403 if client is not admin', async () => {
+      token = new User({ isAdmin: false }).generateAuthToken();
+
+      const res = await exec();
+
+      expect(res.status).toBe(403);
+    });
+
+    it('should return 404 if id is invalid', async () => {
+      id = 1;
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if no product with the given id was found', async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should delete the product if input is valid', async () => {
+      await exec();
+
+      const productInDb = await Product.findById(id);
+
+      expect(productInDb).toBeNull();
     });
   });
 });
