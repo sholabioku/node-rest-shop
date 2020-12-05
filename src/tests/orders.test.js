@@ -47,7 +47,6 @@ describe('Integration test for orders routes', () => {
         price: 1200,
         productImage: 'benz.png',
       });
-      await product.save();
 
       const order = new Order({
         product,
@@ -76,6 +75,67 @@ describe('Integration test for orders routes', () => {
       const id = new mongoose.Types.ObjectId();
       const res = await request(server).get(`/orders/${id}`).set('auth', token);
       expect(res.status).toBe(404);
+    });
+  });
+
+  describe('DELETE /orders/:orderId', () => {
+    it('should return 401 if client is not logged in', async () => {
+      const res = await request(server).delete('/orders/:orderId');
+      expect(res.status).toBe(401);
+    });
+
+    it('should return 403 if client is not admin', async () => {
+      const token = new User({ isAdmin: false }).generateAuthToken();
+      const res = await request(server)
+        .delete('/orders/:orderId')
+        .set('auth', token)
+        .send();
+      expect(res.status).toBe(403);
+    });
+
+    it('should delete order', async () => {
+      const product = new Product({
+        _id: mongoose.Types.ObjectId(),
+        name: 'Benz',
+        price: 1200,
+        productImage: 'benz.png',
+      });
+
+      const order = new Order({
+        product,
+        quantity: 2,
+        customer: mongoose.Types.ObjectId(),
+      });
+      await order.save();
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .delete(`/orders/${order._id}`)
+        .set('auth', token)
+        .send();
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe('POST /orders', () => {
+    it('should save order if it is valid', async () => {
+      const product = new Product({
+        _id: mongoose.Types.ObjectId(),
+        name: 'Benz',
+        price: 1200,
+        productImage: 'benz.png',
+      });
+      await product.save();
+
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .post('/orders')
+        .set('auth', token)
+        .send({ productId: product._id, quantity: 2 });
+
+      const order = await Order.find({ productId: product._id, quantity: 2 });
+
+      expect(res.body.createdOrder).toHaveProperty('_id');
+      expect(order).not.toBeNull();
     });
   });
 });
