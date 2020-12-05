@@ -137,5 +137,39 @@ describe('Integration test for orders routes', () => {
       expect(res.body.createdOrder).toHaveProperty('_id');
       expect(order).not.toBeNull();
     });
+
+    it('should return 404 if Id for the product to order is not found', async () => {
+      const product = new Product({
+        _id: mongoose.Types.ObjectId(),
+        name: 'Benz',
+        price: 1200,
+        productImage: 'benz.png',
+      });
+
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .post('/orders')
+        .set('auth', token)
+        .send({ productId: product._id, quantity: 2 });
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if invalid productId is passed', async () => {
+      const product = new Product({
+        _id: mongoose.Types.ObjectId(),
+        name: 'Benz',
+        price: 1200,
+        productImage: 'benz.png',
+      });
+
+      const token = new User({ isAdmin: true }).generateAuthToken();
+      const res = await request(server)
+        .post('/orders')
+        .set('auth', token)
+        .send({ productId: '123abc', quantity: 2 });
+
+      expect(res.status).toBe(404);
+    });
   });
 });
