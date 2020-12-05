@@ -33,4 +33,11 @@ describe('Integration test for orders routes', () => {
       expect(res.status).toBe(200);
     });
   });
+
+  describe('GET /orders/:orderId', () => {
+    it('should return 401 if client is not logged in', async () => {
+      const res = await request(server).get('/orders/:orderId');
+      expect(res.status).toBe(401);
+    });
+  });
 });
