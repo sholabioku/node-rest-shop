@@ -31,7 +31,7 @@ describe('Integration Test for Product', () => {
       await Product.collection.insertMany(products);
       const res = await request(server).get('/products');
       expect(res.status).toBe(200);
-      expect(res.body.products.length).toBe(2);
+      expect(res.body.products.length).toBe(3);
     });
   });
 
