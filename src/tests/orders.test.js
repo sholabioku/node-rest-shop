@@ -8,6 +8,10 @@ import Order from '../models/order';
 import Product from '../models/product';
 
 describe('Integration test for orders routes', () => {
+  afterEach(async () => {
+    await Order.deleteMany({});
+  });
+
   describe('GET /orders', () => {
     it('should return 401 if client is not logged in', async () => {
       const res = await request(server).get('/orders');
