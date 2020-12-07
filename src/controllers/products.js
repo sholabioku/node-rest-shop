@@ -29,17 +29,17 @@ export const addProduct = asyncHandler(async (req, res, next) => {
     productImage: req.file.path,
   });
 
-  const createdProduct = await product.save();
+  await product.save();
   res.status(201).json({
     message: 'Product created successfully',
     createdProduct: {
-      name: createdProduct.name,
-      price: createdProduct.price,
-      productImage: createdProduct.productImage,
-      _id: createdProduct._id,
+      name: product.name,
+      price: product.price,
+      productImage: product.productImage,
+      _id: product._id,
       request: {
         type: 'GET',
-        url: `http://localhost:3000/products/${createdProduct._id}`,
+        url: `http://localhost:3000/products/${product._id}`,
       },
     },
   });
