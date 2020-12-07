@@ -31,30 +31,33 @@ export const addOrder = asyncHandler(async (req, res, next) => {
     return res.status(404).json({ message: 'Invalid ID' });
 
   const product = await Product.findById(req.body.productId);
-  if (!product) {
+  if (!product)
     return res
       .status(404)
       .json({ message: `Product with id of ${req.body.productId} not found` });
-  }
+
+  const { quantity } = req.body;
   const order = new Order({
-    quantity: req.body.quantity,
+    quantity,
     product: req.body.productId,
     customer: req.user._id,
   });
 
-  const createdOrder = await order.save();
-  res.status(201).json({
+  await order.save();
+
+  const response = {
     message: 'Order was created',
     createdOrder: {
-      _id: createdOrder._id,
-      product: createdOrder.product,
-      quantity: createdOrder.quantity,
+      _id: order._id,
+      product: order.product,
+      quantity: order.quantity,
     },
     request: {
       type: 'GET',
-      url: `http://localhost:3000/orders/${createdOrder._id}`,
+      url: `http://localhost:3000/orders/${order._id}`,
     },
-  });
+  };
+  res.status(201).json(response);
 });
 
 export const getOrder = asyncHandler(async (req, res, next) => {
