@@ -35,7 +35,7 @@ describe('Integration Test for Product', () => {
     });
   });
 
-  describe('GET /products/:productId', () => {
+  describe('GET /products/:id', () => {
     it('should return a product if valid id is passed', async () => {
       const product = new Product({
         _id: new mongoose.Types.ObjectId(),
@@ -105,7 +105,7 @@ describe('Integration Test for Product', () => {
     });
   });
 
-  describe('PATCH /products/productId', () => {
+  describe('PATCH /products/:id', () => {
     let token;
     let product;
     let newName;
@@ -172,7 +172,7 @@ describe('Integration Test for Product', () => {
     });
   });
 
-  describe('DELETE /products/:productId', () => {
+  describe('DELETE /products/:id', () => {
     let token;
     let product;
     let id;
