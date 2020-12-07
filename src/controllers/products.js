@@ -46,7 +46,7 @@ export const addProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const getProduct = asyncHandler(async (req, res, next) => {
-  const id = req.params.productId;
+  const { id } = req.params;
   const product = await Product.findById(id).select(
     'name price productImage _id'
   );
@@ -63,7 +63,7 @@ export const getProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const editProduct = asyncHandler(async (req, res, next) => {
-  const id = req.params.productId;
+  const { id } = req.params;
   const body = _.pick(req.body, ['name', 'price']);
   const product = await Product.findOneAndUpdate(
     { _id: id },
@@ -83,7 +83,7 @@ export const editProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteProduct = asyncHandler(async (req, res, next) => {
-  const id = req.params.productId;
+  const { id } = req.params;
   const product = await Product.findOneAndDelete({ _id: id });
   if (!product) return res.status(404).json({ message: 'No product found' });
 

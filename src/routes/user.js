@@ -9,7 +9,7 @@ import {
 
 // import admin from '../middlewares/admin';
 import checkAuth from '../middlewares/check-auth';
-import { validateUserId } from '../middlewares/validateObjectId';
+import validateObjectId from '../middlewares/validateObjectId';
 
 const router = Router();
 
@@ -19,6 +19,6 @@ router.post('/login', authenticateUser);
 
 router.get('/me', checkAuth, getCurrentUser);
 
-router.delete('/:userId', [checkAuth, validateUserId], deleteUser);
+router.delete('/:id', [checkAuth, validateObjectId], deleteUser);
 
 export default router;

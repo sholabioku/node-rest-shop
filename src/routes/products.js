@@ -11,7 +11,7 @@ import {
 } from '../controllers/products';
 
 import admin from '../middlewares/admin';
-import { validateProductId } from '../middlewares/validateObjectId';
+import validateObjectId from '../middlewares/validateObjectId';
 
 const router = Router();
 
@@ -44,14 +44,10 @@ router.get('/', getProducts);
 
 router.post('/', [checkAuth, admin], upload.single('productImage'), addProduct);
 
-router.get('/:productId', validateProductId, getProduct);
+router.get('/:id', validateObjectId, getProduct);
 
-router.patch('/:productId', [checkAuth, admin, validateProductId], editProduct);
+router.patch('/:id', [checkAuth, admin, validateObjectId], editProduct);
 
-router.delete(
-  '/:productId',
-  [checkAuth, admin, validateProductId],
-  deleteProduct
-);
+router.delete('/:id', [checkAuth, admin, validateObjectId], deleteProduct);
 
 export default router;
