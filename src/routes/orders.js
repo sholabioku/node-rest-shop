@@ -7,7 +7,7 @@ import {
   deleteOrder,
 } from '../controllers/orders';
 
-import { validateOrderId } from '../middlewares/validateObjectId';
+import validateObjectId from '../middlewares/validateObjectId';
 import checkAuth from '../middlewares/check-auth';
 import admin from '../middlewares/admin';
 
@@ -17,8 +17,8 @@ router.get('/', checkAuth, getOrders);
 
 router.post('/', checkAuth, addOrder);
 
-router.get('/:orderId', [checkAuth, validateOrderId], getOrder);
+router.get('/:id', [checkAuth, validateObjectId], getOrder);
 
-router.delete('/:orderId', [checkAuth, admin, validateOrderId], deleteOrder);
+router.delete('/:id', [checkAuth, admin, validateObjectId], deleteOrder);
 
 export default router;

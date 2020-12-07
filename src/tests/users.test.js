@@ -99,7 +99,7 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe('DELETE /user/:userId', () => {
+  describe('DELETE /user/:id', () => {
     it('should return 401 if user not logged in', async () => {
       const res = await request(server).delete(`/user/${userOne._id}`).send();
       expect(res.status).toBe(401);

@@ -58,7 +58,7 @@ export const addOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const getOrder = asyncHandler(async (req, res, next) => {
-  const order = await Order.findById(req.params.orderId)
+  const order = await Order.findById(req.params.id)
     .select('quantity product _id')
     .populate('product');
   if (!order) {
@@ -74,7 +74,7 @@ export const getOrder = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteOrder = asyncHandler(async (req, res, next) => {
-  const order = await Order.findByIdAndUpdate(req.params.orderId);
+  const order = await Order.findByIdAndUpdate(req.params.id);
   if (!order) return res.status(404).json({ message: 'Order not found' });
 
   res.status(200).json({
