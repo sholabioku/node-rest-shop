@@ -23,14 +23,16 @@ export const getProducts = asyncHandler(async (req, res, next) => {
 });
 
 export const addProduct = asyncHandler(async (req, res, next) => {
+  const { name, price } = req.body;
+
   const product = new Product({
-    name: req.body.name,
-    price: req.body.price,
+    name,
+    price,
     productImage: req.file.path,
   });
 
   await product.save();
-  res.status(201).json({
+  const response = {
     message: 'Product created successfully',
     createdProduct: {
       name: product.name,
@@ -42,7 +44,8 @@ export const addProduct = asyncHandler(async (req, res, next) => {
         url: `http://localhost:3000/products/${product._id}`,
       },
     },
-  });
+  };
+  res.status(201).json(response);
 });
 
 export const getProduct = asyncHandler(async (req, res, next) => {
