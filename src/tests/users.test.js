@@ -100,15 +100,30 @@ describe('Integration test for users routes', () => {
   });
 
   describe('DELETE /user/:userId', () => {
+    it('should return 401 if user not logged in', async () => {
+      const res = await request(server).delete(`/user/${userOne._id}`).send();
+      expect(res.status).toBe(401);
+    });
+
     it('should return 404 if user not found', async () => {
       const token = userOne.generateAuthToken();
 
       const id = mongoose.Types.ObjectId();
       const res = await request(server)
-        .post(`/user/${id}`)
+        .delete(`/user/${id}`)
         .set('auth', token)
         .send();
       expect(res.status).toBe(404);
+    });
+
+    it('should return 200 if user is deleted', async () => {
+      const token = userOne.generateAuthToken();
+
+      const res = await request(server)
+        .delete(`/user/${userOne._id}`)
+        .set('auth', token)
+        .send();
+      expect(res.status).toBe(200);
     });
   });
 });
