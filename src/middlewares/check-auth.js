@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 
 export default (req, res, next) => {
   try {
-    // const token = req.headers.authorization.split(' ')[1];
     const token = req.header('auth');
     if (!token) return res.status(401).json({ message: 'Auth failed' });
 

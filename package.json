@@ -21,6 +21,9 @@
     "Rest",
     "API"
   ],
+  "engines": {
+    "node": "14.4.0"
+  },
   "author": "Lukman Bioku",
   "license": "MIT",
   "dependencies": {
