@@ -77,28 +77,24 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe.skip('POST /user/login', () => {
+  describe('POST /user/login', () => {
     it('should login user and return token', async () => {
-      const token = userOne.generateAuthToken();
+      const userOneToken = userOne.generateAuthToken();
 
       const res = await request(server)
         .post('/user/login')
-        .set('auth', token)
-        .send({
-          email: 'bilush@gmail.com',
-          password: 'userOnePass',
-          isAdmin: true,
-        });
+        .set('auth', userOneToken)
+        .send(users[0]);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('token');
     });
 
-    it('should return 400 for invalid login', async () => {
-      const token = userOne.generateAuthToken();
+    it('should return 401 for invalid login', async () => {
+      const userOneToken = userOne.generateAuthToken();
 
       const res = await request(server)
         .post('/user/login')
-        .set('auth', token)
+        .set('auth', userOneToken)
         .send({
           email: 'bilush@gmail.com',
           password: 'userOnePass!',
