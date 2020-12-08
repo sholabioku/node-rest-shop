@@ -8,19 +8,24 @@ import User from '../models/user';
 describe('Integration test for users routes', () => {
   let userOne;
   let userTwo;
-  beforeEach(async () => {
-    userOne = new User({
+  const users = [
+    {
       email: 'bilush@gmail.com',
       password: 'userOnePass',
       isAdmin: true,
-    });
-    await userOne.save();
-
-    userTwo = new User({
+    },
+    {
       email: 'shola@gmail.com',
       password: 'userTwoPass',
       isAdmin: false,
-    });
+    },
+  ];
+
+  beforeEach(async () => {
+    userOne = new User(users[0]);
+    await userOne.save();
+
+    userTwo = new User(users[1]);
     await userTwo.save();
   });
   afterEach(async () => {
@@ -28,9 +33,13 @@ describe('Integration test for users routes', () => {
   });
   describe('GET /user/me', () => {
     it('should return user if authenticated', async () => {
-      const token = userOne.generateAuthToken();
-      const res = await request(server).get('/user/me').set('auth', token);
+      const userOneToken = userOne.generateAuthToken();
+      const res = await request(server)
+        .get('/user/me')
+        .set('auth', userOneToken);
       expect(res.status).toBe(200);
+      expect(res.body._id).toBe(userOne._id.toHexString());
+      expect(res.body.email).toBe(userOne.email);
     });
 
     it('should return 401 if user is not authenticated', async () => {
@@ -39,7 +48,7 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe('POST /user/signup', () => {
+  describe.skip('POST /user/signup', () => {
     it('should create a user', async () => {
       const email = 'example@example.com';
       const password = '123mnb!';
@@ -68,7 +77,7 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe('POST /user/login', () => {
+  describe.skip('POST /user/login', () => {
     it('should login user and return token', async () => {
       const token = userOne.generateAuthToken();
 
@@ -99,7 +108,7 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe('DELETE /user/:id', () => {
+  describe.skip('DELETE /user/:id', () => {
     it('should return 401 if user not logged in', async () => {
       const res = await request(server).delete(`/user/${userOne._id}`).send();
       expect(res.status).toBe(401);
