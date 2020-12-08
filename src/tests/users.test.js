@@ -8,19 +8,24 @@ import User from '../models/user';
 describe('Integration test for users routes', () => {
   let userOne;
   let userTwo;
-  beforeEach(async () => {
-    userOne = new User({
+  const users = [
+    {
       email: 'bilush@gmail.com',
       password: 'userOnePass',
       isAdmin: true,
-    });
-    await userOne.save();
-
-    userTwo = new User({
+    },
+    {
       email: 'shola@gmail.com',
       password: 'userTwoPass',
       isAdmin: false,
-    });
+    },
+  ];
+
+  beforeEach(async () => {
+    userOne = new User(users[0]);
+    await userOne.save();
+
+    userTwo = new User(users[1]);
     await userTwo.save();
   });
   afterEach(async () => {
@@ -28,9 +33,13 @@ describe('Integration test for users routes', () => {
   });
   describe('GET /user/me', () => {
     it('should return user if authenticated', async () => {
-      const token = userOne.generateAuthToken();
-      const res = await request(server).get('/user/me').set('auth', token);
+      const userOneToken = userOne.generateAuthToken();
+      const res = await request(server)
+        .get('/user/me')
+        .set('auth', userOneToken);
       expect(res.status).toBe(200);
+      expect(res.body._id).toBe(userOne._id.toHexString());
+      expect(res.body.email).toBe(userOne.email);
     });
 
     it('should return 401 if user is not authenticated', async () => {
@@ -57,7 +66,7 @@ describe('Integration test for users routes', () => {
       expect(user.password).not.toBe(password);
     });
 
-    it('should not create user if email is already in use', async () => {
+    it('should return 400 if email is already exist', async () => {
       const { email } = userOne;
       const password = 'userOnePass';
       const isAdmin = true;
@@ -70,26 +79,22 @@ describe('Integration test for users routes', () => {
 
   describe('POST /user/login', () => {
     it('should login user and return token', async () => {
-      const token = userOne.generateAuthToken();
+      const userOneToken = userOne.generateAuthToken();
 
       const res = await request(server)
         .post('/user/login')
-        .set('auth', token)
-        .send({
-          email: 'bilush@gmail.com',
-          password: 'userOnePass',
-          isAdmin: true,
-        });
+        .set('auth', userOneToken)
+        .send(users[0]);
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('token');
     });
 
-    it('should return 400 for invalid login', async () => {
-      const token = userOne.generateAuthToken();
+    it('should return 401 for invalid login', async () => {
+      const userOneToken = userOne.generateAuthToken();
 
       const res = await request(server)
         .post('/user/login')
-        .set('auth', token)
+        .set('auth', userOneToken)
         .send({
           email: 'bilush@gmail.com',
           password: 'userOnePass!',
@@ -100,28 +105,28 @@ describe('Integration test for users routes', () => {
   });
 
   describe('DELETE /user/:id', () => {
-    it('should return 401 if user not logged in', async () => {
+    it('should return 401 if user is not logged in', async () => {
       const res = await request(server).delete(`/user/${userOne._id}`).send();
       expect(res.status).toBe(401);
     });
 
     it('should return 404 if user not found', async () => {
-      const token = userOne.generateAuthToken();
+      const userOneToken = userOne.generateAuthToken();
 
       const id = mongoose.Types.ObjectId();
       const res = await request(server)
         .delete(`/user/${id}`)
-        .set('auth', token)
+        .set('auth', userOneToken)
         .send();
       expect(res.status).toBe(404);
     });
 
     it('should return 200 if user is deleted', async () => {
-      const token = userOne.generateAuthToken();
+      const userOneToken = userOne.generateAuthToken();
 
       const res = await request(server)
         .delete(`/user/${userOne._id}`)
-        .set('auth', token)
+        .set('auth', userOneToken)
         .send();
       expect(res.status).toBe(200);
     });
