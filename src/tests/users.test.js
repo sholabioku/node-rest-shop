@@ -48,7 +48,7 @@ describe('Integration test for users routes', () => {
     });
   });
 
-  describe.skip('POST /user/signup', () => {
+  describe('POST /user/signup', () => {
     it('should create a user', async () => {
       const email = 'example@example.com';
       const password = '123mnb!';
@@ -66,7 +66,7 @@ describe('Integration test for users routes', () => {
       expect(user.password).not.toBe(password);
     });
 
-    it('should not create user if email is already in use', async () => {
+    it('should return 400 if email is already exist', async () => {
       const { email } = userOne;
       const password = 'userOnePass';
       const isAdmin = true;
